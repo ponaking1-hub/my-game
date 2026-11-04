@@ -6,491 +6,336 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>حصّاد الفلوس</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;800&family=Lalezar&display=swap">
-
 <style>
-:root {
-  --bg:#0c1a14;
-  --panel:#14291f;
-  --card:#1c382a;
-  --line:#2a4a38;
-  --fg:#e9f3ec;
-  --muted:#93b3a0;
-  --brass:#f0c453;
-  --bill:#7be495;
-  --coin-hi:#ffe7a3;
-  --coin-lo:#b88a1e;
-  --coin-ink:#6a4a08;
-  --display:'Lalezar','Cairo',system-ui,sans-serif;
-  --body:'Cairo',system-ui,sans-serif;
-  color-scheme:dark;
+:root{
+--bg:#0c1a14;--panel:#14291f;--card:#1c382a;
+--line:#2a4a38;--fg:#e9f3ec;--muted:#93b3a0;
+--brass:#f0c453;--bill:#7be495;--gem:#58e6ff;
+--display:'Lalezar','Cairo',sans-serif;
+--body:'Cairo',sans-serif;color-scheme:dark
 }
-
-html,body{height:100%}
-body{
- margin:0;background:var(--bg);color:var(--fg);
- font-family:var(--body);touch-action:manipulation;
- user-select:none;
-}
-#app{height:100%;display:flex;flex-direction:column}
-#top{
- flex:0 0 auto;display:flex;flex-direction:column;
- align-items:center;gap:4px;padding:14px 16px 0;text-align:center
-}
-#lbl{margin:0;font-size:15px;color:var(--muted)}
-#bal{
- margin:0;font:400 clamp(44px,14vw,68px)/1.05 var(--display);
- color:var(--brass)
-}
-#rate{margin:0;font-size:16px;color:var(--bill)}
-#note{margin:0;font-size:14px;color:var(--muted);min-height:1.4em}
-
-#prestigeInfo{
- color:var(--brass);
- font-size:15px;
- font-weight:800;
- padding:5px 12px;
- border:1px solid var(--line);
- border-radius:12px;
- background:var(--card);
-}
-
-#coinWrap{
- position:relative;display:grid;place-items:center;
- padding:8px 0 18px
-}
-#coin{
- width:clamp(150px,42vw,200px);
- aspect-ratio:1;border:0;border-radius:50%;
- cursor:pointer;display:grid;place-items:center;
- font:400 clamp(72px,22vw,100px)/1 var(--display);
- color:var(--coin-ink);
- background:radial-gradient(circle at 35% 28%,var(--coin-hi),var(--brass) 55%,var(--coin-lo));
- box-shadow:inset 0 0 0 9px rgba(0,0,0,.12),
- inset 0 0 0 11px rgba(255,255,255,.25),
- 0 12px 30px rgba(0,0,0,.5);
- transition:transform .06s ease-out
-}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);user-select:none}
+#app{min-height:100vh;display:flex;flex-direction:column}
+#top{display:flex;flex-direction:column;align-items:center;gap:5px;padding:14px 16px 10px;text-align:center}
+#lbl{margin:0;color:var(--muted)}
+#bal{margin:0;font:clamp(44px,14vw,68px)/1.1 var(--display);color:var(--brass)}
+#rate{margin:0;color:var(--bill)}
+#gemBalance{margin:4px 0;color:var(--gem);font-weight:800;font-size:19px;background:#102c35;border:1px solid #246071;border-radius:12px;padding:5px 15px}
+#gemTimer{margin:0;color:#91dce9;font-size:13px}
+#prestigeInfo{margin:4px;color:var(--brass);font-weight:800;background:var(--card);border:1px solid var(--line);padding:6px 12px;border-radius:12px}
+#note{margin:0;min-height:1.4em;color:var(--muted);font-size:14px}
+#coinWrap{position:relative;display:grid;place-items:center;padding:8px 0 18px}
+#coin{width:clamp(150px,42vw,200px);aspect-ratio:1;border:0;border-radius:50%;cursor:pointer;display:grid;place-items:center;font:clamp(72px,22vw,100px)/1 var(--display);color:#6a4a08;background:radial-gradient(circle at 35% 28%,#ffe7a3,#f0c453 55%,#b88a1e);box-shadow:inset 0 0 0 9px #0002,inset 0 0 0 11px #ffffff40,0 12px 30px #0008;transition:transform .06s}
 #coin:active{transform:scale(.94)}
 #fx{position:absolute;inset:0;pointer-events:none}
-.pop{
- position:absolute;font:400 26px var(--display);
- color:var(--bill);transform:translate(-50%,-50%);
- animation:rise .8s ease-out forwards;white-space:nowrap
+.pop{position:absolute;font:26px var(--display);color:var(--bill);transform:translate(-50%,-50%);animation:rise .8s forwards;white-space:nowrap}
+@keyframes rise{to{transform:translate(-50%,-150px);opacity:0}}
+#shop{flex:1;min-height:300px;display:flex;flex-direction:column;gap:10px;padding:15px 16px 25px;background:var(--panel);border-radius:22px 22px 0 0;border-top:1px solid var(--line)}
+h2{margin:0 0 2px;font-size:17px;color:var(--muted)}
+.section{margin-top:12px!important;padding-top:12px;border-top:1px solid var(--line)}
+.ds{font-size:13px;color:var(--muted);line-height:1.6}
+.up,.rebirth{
+display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;width:100%;padding:12px 14px;text-align:right;color:var(--fg);font-family:var(--body);background:var(--card);border:1px solid var(--line);border-radius:14px;cursor:pointer
 }
-@keyframes rise{
- to{transform:translate(-50%,-150px);opacity:0}
-}
-
-#shop{
- flex:1 1 auto;min-height:0;overflow-y:auto;
- display:flex;flex-direction:column;gap:10px;
- padding:14px 16px 20px;background:var(--panel);
- border-radius:22px 22px 0 0;border-top:1px solid var(--line)
-}
-#shop h2{margin:0 0 2px;font-size:16px;color:var(--muted)}
-
-.up{
- display:grid;grid-template-columns:minmax(0,1fr) auto;
- align-items:center;gap:12px;width:100%;
- padding:12px 14px;text-align:right;color:var(--fg);
- font-family:var(--body);background:var(--card);
- border:1px solid var(--line);border-radius:14px;cursor:pointer
-}
-.up:disabled{cursor:default}
+.up:disabled,.rebirth:disabled{cursor:not-allowed;opacity:.7}
 .info{display:flex;flex-direction:column;gap:2px;min-width:0}
-.nm{font-size:17px;font-weight:800}
-.nm small{font-weight:500;font-size:13px;color:var(--muted)}
-.ds{font-size:14px;color:var(--muted);line-height:1.5}
-.pr{
- font:400 20px var(--display);color:var(--bg);
- background:var(--bill);border-radius:999px;
- padding:6px 16px;white-space:nowrap
-}
-.up:disabled .pr{
- background:transparent;color:var(--muted);
- box-shadow:inset 0 0 0 1px var(--line)
-}
-.up:disabled .info{opacity:.7}
-
-/* Rebirth */
-#rebirth{
- display:grid;
- grid-template-columns:minmax(0,1fr) auto;
- align-items:center;gap:12px;width:100%;
- padding:15px 14px;text-align:right;
- color:var(--fg);font-family:var(--body);
- background:linear-gradient(135deg,#463817,#76551b);
- border:2px solid var(--brass);
- border-radius:16px;cursor:pointer
-}
-#rebirth:disabled{
- background:var(--card);
- border-color:var(--line);
- cursor:not-allowed
-}
-#rebirth .nm{color:#ffe7a3}
-#rebirth:disabled .nm{color:var(--muted)}
-#rebirth .pr{background:var(--brass);color:#302309}
-#rebirth:disabled .pr{
- background:transparent;color:var(--muted);
- box-shadow:inset 0 0 0 1px var(--line)
-}
-#rebirth .ds{color:#f1e3bd}
-#rebirth:disabled .ds{color:var(--muted)}
-
-@media(prefers-reduced-motion:reduce){
- .pop{animation-duration:.01s}
- #coin{transition:none}
-}
+.nm{font-size:16px;font-weight:800}
+.nm small{font-size:12px;color:var(--muted);font-weight:500}
+.pr{font:20px var(--display);color:var(--bg);background:var(--bill);border-radius:999px;padding:6px 13px;white-space:nowrap}
+.up:disabled .pr,.rebirth:disabled .pr{background:transparent;color:var(--muted);box-shadow:inset 0 0 0 1px var(--line)}
+.gemUpgrade{background:linear-gradient(135deg,#12343d,#1b4550);border-color:#287080}
+.gemUpgrade .nm{color:var(--gem)}
+.gemUpgrade .pr{background:var(--gem);color:#09232a}
+.rebirth{background:linear-gradient(135deg,#463817,#76551b);border:2px solid var(--brass)}
+.rebirth .nm{color:#ffe7a3}
+.rebirth .ds{color:#f1e3bd}
+.rebirth .pr{background:var(--brass);color:#302309}
+@media(prefers-reduced-motion:reduce){.pop{animation-duration:.01s}#coin{transition:none}}
 </style>
 </head>
-
 <body>
 <div id="app" dir="rtl" lang="ar">
-
 <div id="top">
- <p id="lbl">رصيدك</p>
- <p id="bal">٠ ج</p>
- <p id="rate"></p>
- <p id="prestigeInfo">إعادة الولادة: ٠ | المضاعف: ×1</p>
- <p id="note"></p>
-
- <div id="coinWrap">
-  <button id="coin" type="button" aria-label="اضغط عشان تجمع فلوس">ج</button>
-  <div id="fx"></div>
- </div>
+<p id="lbl">رصيدك</p>
+<p id="bal">٠ ج</p>
+<p id="rate"></p>
+<p id="gemBalance">💎 ٠ جوهرة</p>
+<p id="gemTimer">الجوهرة القادمة بعد 60 ثانية</p>
+<p id="prestigeInfo"></p>
+<p id="note"></p>
+<div id="coinWrap">
+<button id="coin" type="button" aria-label="اضغط لجمع الفلوس">ج</button>
+<div id="fx"></div>
 </div>
-
+</div>
 <div id="shop">
- <h2>التطويرات</h2>
+<h2>🛠️ التطويرات العادية</h2>
+<h2 class="section">💎 متجر الجواهر</h2>
+<p class="ds">كل شراء يضاعف أرباحك ×2 بشكل دائم.</p>
+<h2 class="section">⭐ مستويات إعادة الولادة</h2>
 </div>
-
 </div>
 
 <script>
 (function(){
 'use strict';
-
-var KEY='harras-money-v1';
-var $=function(id){return document.getElementById(id)};
-
-var balEl=$('bal');
-var rateEl=$('rate');
-var noteEl=$('note');
-var coin=$('coin');
-var wrap=$('coinWrap');
-var fxEl=$('fx');
-var shop=$('shop');
-var prestigeInfo=$('prestigeInfo');
-
-var calm=window.matchMedia &&
- matchMedia('(prefers-reduced-motion: reduce)').matches;
+var KEY='harras-money-v3';
+var $=id=>document.getElementById(id);
+var balEl=$('bal'),rateEl=$('rate'),noteEl=$('note');
+var coin=$('coin'),wrap=$('coinWrap'),fxEl=$('fx'),shop=$('shop');
+var gemBalance=$('gemBalance'),gemTimer=$('gemTimer'),prestigeInfo=$('prestigeInfo');
 
 var S={
- money:0,
- click:0,
- reaper:0,
- free:0,
- factory:0,
- mult:0,
- rebirths:0,
- t:Date.now()
+ money:0,click:0,reaper:0,free:0,factory:0,mult:0,
+ r1:0,r2:0,r3:0,r4:0,
+ gems:0,gemLevel:0,gemTime:Date.now(),t:Date.now()
 };
 
-var REBIRTH_COST=1000000;
-
-var UNITS=[
- [1e15,'كوادريليون'],
- [1e12,'تريليون'],
- [1e9,'مليار'],
- [1e6,'مليون'],
- [1e3,'ألف']
-];
-
-function nf(x,d){
- return x.toLocaleString('ar-EG',{
-  minimumFractionDigits:0,
-  maximumFractionDigits:d
- });
-}
-
+var UNITS=[[1e15,'كوادريليون'],[1e12,'تريليون'],[1e9,'مليار'],[1e6,'مليون'],[1e3,'ألف']];
+function nf(x,d){return x.toLocaleString('ar-EG',{maximumFractionDigits:d===undefined?0:d})}
 function fmt(n,d){
  if(!isFinite(n))return '∞';
- for(var i=0;i<UNITS.length;i++){
-  if(n>=UNITS[i][0]){
-   return nf(n/UNITS[i][0],2)+' '+UNITS[i][1];
-  }
- }
+ for(var i=0;i<UNITS.length;i++)if(n>=UNITS[i][0])return nf(n/UNITS[i][0],2)+' '+UNITS[i][1];
  return nf(n,d===undefined?(n<100?1:0):d);
 }
-
-/* المضاعف الدائم */
 function prestigeMult(){
- return Math.pow(2,S.rebirths);
+ return Math.pow(2,S.r1)*Math.pow(4,S.r2)*Math.pow(8,S.r3)*Math.pow(16,S.r4);
 }
-
-/* المضاعف الإجمالي */
-function mult(){
- return Math.pow(1.5,S.mult)*prestigeMult();
-}
-
-function clickPower(){
- return (1+S.click)*mult();
-}
-
-function reapers(){
- return S.reaper+S.free;
-}
-
-function rate(){
- return reapers()*mult();
-}
-
-function freeRate(){
- return S.factory*.2;
-}
+function gemMult(){return Math.pow(2,S.gemLevel)}
+function mult(){return Math.pow(1.5,S.mult)*prestigeMult()*gemMult()}
+function clickPower(){return (1+S.click)*mult()}
+function reapers(){return S.reaper+S.free}
+function rate(){return reapers()*mult()}
+function freeRate(){return S.factory*.2}
 
 var UP=[
- {
-  k:'click',
-  name:'قوة الضغطة',
-  base:15,
-  g:1.35,
-  desc:function(){
-   return 'كل ضغطة بتجيب '+fmt(clickPower())+' ج';
-  }
- },
- {
-  k:'reaper',
-  name:'ريبير',
-  base:60,
-  g:1.22,
-  desc:function(){
-   return 'عندك '+fmt(Math.floor(reapers()),0)+
-   ' ريبير بيجيبوا '+fmt(rate())+' ج في الثانية';
-  }
- },
- {
-  k:'factory',
-  name:'مصنع الريبير',
-  base:400,
-  g:1.6,
-  desc:function(){
-   return 'بيصنع '+fmt(freeRate(),1)+' ريبير جديد كل ثانية';
-  }
- },
- {
-  k:'mult',
-  name:'مضاعف الأرباح',
-  base:1000,
-  g:3,
-  desc:function(){
-   return 'كل أرباحك × '+fmt(Math.pow(1.5,S.mult));
-  }
- }
+{k:'click',name:'قوة الضغطة',base:15,g:1.35,desc:()=> 'كل ضغطة بتجيب '+fmt(clickPower())+' ج'},
+{k:'reaper',name:'ريبير',base:60,g:1.22,desc:()=> 'عندك '+fmt(Math.floor(reapers()),0)+' ريبير، دخلهم '+fmt(rate())+' ج في الثانية'},
+{k:'factory',name:'مصنع الريبير',base:400,g:1.6,desc:()=> 'بيصنع '+fmt(freeRate(),1)+' ريبير جديد كل ثانية'},
+{k:'mult',name:'مضاعف الأرباح',base:1000,g:3,desc:()=> 'مضاعف التطوير ×'+fmt(Math.pow(1.5,S.mult))}
 ];
+function cost(u){return Math.floor(u.base*Math.pow(u.g,S[u.k]))}
 
-function cost(u){
- return Math.floor(u.base*Math.pow(u.g,S[u.k]));
-}
-
-/* إنشاء التطويرات */
+var upTitle=shop.children[0];
 UP.forEach(function(u){
  var b=document.createElement('button');
- b.type='button';
- b.className='up';
- b.setAttribute('data-k',u.k);
-
- b.innerHTML=
- '<span class="info">'+
- '<span class="nm"></span>'+
- '<span class="ds"></span>'+
- '</span>'+
- '<span class="pr"></span>';
-
- shop.appendChild(b);
-
- u.el=b;
- u.nm=b.querySelector('.nm');
- u.ds=b.querySelector('.ds');
- u.pr=b.querySelector('.pr');
+ b.className='up';b.type='button';b.dataset.k=u.k;
+ b.innerHTML='<span class="info"><span class="nm"></span><span class="ds"></span></span><span class="pr"></span>';
+ upTitle.after(b);
+ u.el=b;u.nm=b.querySelector('.nm');u.ds=b.querySelector('.ds');u.pr=b.querySelector('.pr');
 });
 
-/* إنشاء زر إعادة الولادة */
-var rebirthBtn=document.createElement('button');
-rebirthBtn.type='button';
-rebirthBtn.id='rebirth';
+/* الجواهر */
+var gemTitle=shop.querySelectorAll('h2')[1];
+var gemBtn=document.createElement('button');
+gemBtn.type='button';gemBtn.className='up gemUpgrade';
+gemBtn.innerHTML='<span class="info"><span class="nm" id="gemName"></span><span class="ds" id="gemDesc"></span></span><span class="pr" id="gemPrice"></span>';
+gemTitle.after(gemBtn);
+var gemName=$('gemName'),gemDesc=$('gemDesc'),gemPrice=$('gemPrice');
+function gemCost(){
+ if(S.gemLevel===0)return 10;
+ if(S.gemLevel===1)return 25;
+ return 50*Math.pow(2,S.gemLevel-2);
+}
 
-rebirthBtn.innerHTML=
- '<span class="info">'+
- '<span class="nm">⭐ إعادة الولادة (Rebirth)</span>'+
- '<span class="ds" id="rebirthDesc"></span>'+
- '</span>'+
- '<span class="pr" id="rebirthPrice"></span>';
+/* مستويات Rebirth المتسلسلة */
+var REBS=[
+ {key:'r1',name:'Rebirth 1',need:1000000,source:'فلوس',power:2,desc:'اجمع مليون جنيه لفتح أول مستوى'},
+ {key:'r2',name:'Rebirth 2',need:100,source:'r1',power:2,desc:'يحتاج 100 من Rebirth 1'},
+ {key:'r3',name:'Rebirth 3',need:100,source:'r2',power:2,desc:'يحتاج 100 من Rebirth 2'},
+ {key:'r4',name:'Rebirth 4',need:200,source:'r3',power:2,desc:'يحتاج 200 من Rebirth 3'}
+];
+var rebButtons=[];
+var rebHeading=shop.querySelectorAll('h2')[2];
+REBS.forEach(function(r,index){
+ var b=document.createElement('button');
+ b.type='button';b.className='rebirth';
+ b.innerHTML='<span class="info"><span class="nm"></span><span class="ds"></span></span><span class="pr"></span>';
+ rebHeading.after(b);
+ r.el=b;r.nm=b.querySelector('.nm');r.ds=b.querySelector('.ds');r.pr=b.querySelector('.pr');
+ rebButtons.push(r);
+});
 
-shop.appendChild(rebirthBtn);
-
-var rebirthDesc=$('rebirthDesc');
-var rebirthPrice=$('rebirthPrice');
-
+function sourceValue(r){
+ return r.source==='فلوس'?S.money:S[r.source];
+}
+function currentLevel(index){
+ return S[REBS[index].key];
+}
 function render(){
-
  balEl.textContent=fmt(Math.floor(S.money),0)+' ج';
+ rateEl.textContent=rate()>0?'الدخل التلقائي: '+fmt(rate())+' ج في الثانية':'اشتري أول ريبير عشان تجمع فلوس تلقائيًا';
+ gemBalance.textContent='💎 '+nf(Math.floor(S.gems),0)+' جوهرة';
+ var left=Math.max(0,60000-(Date.now()-S.gemTime));
+ gemTimer.textContent='الجوهرة القادمة بعد '+Math.ceil(left/1000)+' ثانية';
+ prestigeInfo.textContent='Rebirth 1: '+nf(S.r1)+' | 2: '+nf(S.r2)+' | 3: '+nf(S.r3)+' | 4: '+nf(S.r4)+' | المضاعف: ×'+fmt(prestigeMult());
 
- var r=rate();
-
- rateEl.textContent=r>0
- ?'الدخل التلقائي: '+fmt(r)+' ج في الثانية'
- :'اشتري أول ريبير عشان يجمع فلوس لوحده';
-
- prestigeInfo.textContent=
- 'إعادة الولادة: '+nf(S.rebirths,0)+
- ' | المضاعف: ×'+fmt(prestigeMult());
-
- for(var i=0;i<UP.length;i++){
-
-  var u=UP[i];
-  var c=cost(u);
-
-  u.nm.innerHTML=
-  u.name+' <small>مستوى '+nf(S[u.k],0)+'</small>';
-
+ UP.forEach(function(u){
+  u.nm.innerHTML=u.name+' <small>المستوى '+nf(S[u.k])+'</small>';
   u.ds.textContent=u.desc();
-  u.pr.textContent=fmt(c,0)+' ج';
-  u.el.disabled=S.money<c;
- }
-
- rebirthBtn.disabled=S.money<REBIRTH_COST;
-
- rebirthPrice.textContent=fmt(REBIRTH_COST,0)+' ج';
-
- rebirthDesc.textContent=
- 'اجمع مليون جنيه وابدأ من جديد بمضاعفة أرباحك ×'+
- fmt(prestigeMult()*2)+'!';
-}
-
-/* حفظ اللعبة */
-function save(){
- S.t=Date.now();
- try{
-  localStorage.setItem(KEY,JSON.stringify(S));
- }catch(e){}
-}
-
-function say(text){
- noteEl.textContent=text;
- clearTimeout(say.h);
- say.h=setTimeout(function(){
-  noteEl.textContent='';
- },6000);
-}
-
-/* الأرباح أثناء الغياب */
-function offline(){
- var secs=Math.min((Date.now()-S.t)/1000,7200);
- if(secs<10)return;
-
- var gain=rate()*secs*.5;
-
- if(gain>=1){
-  S.money+=gain;
-  say('وانت غايب الريبير جمّع '+fmt(Math.floor(gain),0)+' ج');
- }
-
- S.t=Date.now();
-}
-
-/* تحميل الحفظ القديم والجديد */
-try{
- var raw=localStorage.getItem(KEY);
-
- if(raw){
-  var d=JSON.parse(raw);
-
-  for(var k in S){
-   if(typeof d[k]==='number'&&isFinite(d[k])){
-    S[k]=d[k];
-   }
-  }
- }
-}catch(e){}
-
-offline();
-
-/* تأثير الضغط */
-function pop(x,y,text){
- if(calm)return;
-
- var s=document.createElement('span');
- s.className='pop';
- s.textContent=text;
- s.style.left=x+'px';
- s.style.top=y+'px';
-
- s.addEventListener('animationend',function(){
-  s.remove();
+  u.pr.textContent=fmt(cost(u),0)+' ج';
+  u.el.disabled=S.money<cost(u);
  });
 
+ gemName.textContent='مضاعف الجواهر <small>المستوى '+S.gemLevel+'</small>';
+ gemDesc.textContent='مضاعف الجواهر الحالي ×'+fmt(gemMult());
+ gemPrice.textContent=nf(gemCost())+' 💎';
+ gemBtn.disabled=S.gems<gemCost();
+
+ REBS.forEach(function(r,index){
+  var available=index===0 || S[REBS[index-1].key]>=(index===3?200:100);
+  var value=index===0?S.money:S[REBS[index-1].key];
+  var need=r.need;
+  r.nm.textContent='⭐ '+r.name+' | عندك '+nf(currentLevel(index));
+  r.ds.textContent=index===0
+   ?'تكلفة أول مرة مليون جنيه. كل مستوى يمنح ضعف قوة المستوى السابق.'
+   :'تحتاج '+nf(need)+' من '+REBS[index-1].name+' لترقية المستوى. عندك '+nf(value)+'.';
+  r.pr.textContent=index===0?'1,000,000 ج':nf(need)+' '+(index===1?'Rebirth 1':index===2?'Rebirth 2':'Rebirth 3');
+  r.el.disabled=!available || value<need;
+ });
+}
+
+function save(){
+ S.t=Date.now();
+ try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}
+}
+function say(t){
+ noteEl.textContent=t;clearTimeout(say.h);
+ say.h=setTimeout(()=>noteEl.textContent='',6000);
+}
+function collectGems(){
+ var now=Date.now();
+ var elapsed=Math.max(0,now-S.gemTime);
+ var earned=Math.floor(elapsed/60000);
+ if(earned>0){S.gems+=earned;S.gemTime+=earned*60000}
+ return earned;
+}
+function offline(){
+ var now=Date.now();
+ var secs=Math.min(Math.max(0,(now-S.t)/1000),7200);
+ if(secs>=10){
+  var gain=rate()*secs*.5;
+  if(gain>=1){S.money+=gain;say('وأنت غايب الريبير جمع '+fmt(Math.floor(gain),0)+' ج')}
+ }
+ S.t=now;
+}
+
+/* تحميل الحفظ الجديد فقط */
+try{
+ var raw=localStorage.getItem(KEY);
+ if(raw){
+  var d=JSON.parse(raw);
+  Object.keys(S).forEach(k=>{
+   if(typeof d[k]==='number'&&isFinite(d[k]))S[k]=d[k];
+  });
+ }
+}catch(e){}
+offline();collectGems();
+
+function pop(x,y,text){
+ if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ var s=document.createElement('span');
+ s.className='pop';s.textContent=text;s.style.left=x+'px';s.style.top=y+'px';
+ s.addEventListener('animationend',()=>s.remove());
  fxEl.appendChild(s);
-
- if(fxEl.childNodes.length>24){
-  fxEl.removeChild(fxEl.firstChild);
- }
+ if(fxEl.childNodes.length>24)fxEl.removeChild(fxEl.firstChild);
 }
-
 function tap(x,y){
- var p=clickPower();
-
- S.money+=p;
-
- pop(x,y,'+'+fmt(p));
-
- render();
+ var p=clickPower();S.money+=p;pop(x,y,'+'+fmt(p));render();
 }
-
 coin.addEventListener('pointerdown',function(e){
- var r=wrap.getBoundingClientRect();
- tap(e.clientX-r.left,e.clientY-r.top);
+ var r=wrap.getBoundingClientRect();tap(e.clientX-r.left,e.clientY-r.top);
 });
-
 coin.addEventListener('click',function(e){
- if(e.detail===0){
-  tap(wrap.clientWidth/2,wrap.clientHeight/2);
- }
+ if(e.detail===0)tap(wrap.clientWidth/2,wrap.clientHeight/2);
 });
 
-/* شراء التطويرات */
 shop.addEventListener('click',function(e){
-
- var b=e.target.closest('.up');
-
+ var b=e.target.closest('button');
  if(!b||b.disabled)return;
 
- for(var i=0;i<UP.length;i++){
-
-  var u=UP[i];
-
-  if(u.k===b.getAttribute('data-k')){
-
-   var c=cost(u);
-
-   if(S.money>=c){
-    S.money-=c;
-    S[u.k]++;
-    render();
-    save();
-   }
-
-   return;
+ if(b===gemBtn){
+  var gc=gemCost();
+  if(S.gems>=gc){
+   S.gems-=gc;S.gemLevel++;
+   say('مبروك! مضاعف الجواهر أصبح ×'+fmt(gemMult())+' 💎');
+   render();save();
   }
+  return;
  }
+
+ var u=UP.find(x=>x.el===b);
+ if(u){
+  var c=cost(u);
+  if(S.money>=c){S.money-=c;S[u.k]++;render();save()}
+  return;
+ }
+
+ var r=REBS.find(x=>x.el===b);
+ if(!r)return;
+
+ var index=REBS.indexOf(r);
+ var needed=index===0?1000000:(index===3?200:100);
+ var source=index===0?S.money:S[REBS[index-1].key];
+
+ if(source<needed)return;
+
+ var confirmText=
+ 'تأكيد شراء '+r.name+'؟\n\n'+
+ 'سيتم تصفير الفلوس والتطويرات العادية والمستويات الأقل.\n'+
+ 'الجواهر ومضاعفاتها ستظل معك.\n\n'+
+ 'قوة هذا المستوى ضعف المستوى السابق.';
+
+ if(!confirm(confirmText))return;
+
+ /* تصفير المال والترقيات العادية */
+ S.money=0;S.click=0;S.reaper=0;S.free=0;S.factory=0;S.mult=0;
+
+ /* تصفير كل مستويات Rebirth الأقل */
+ for(var i=0;i<index;i++)S[REBS[i].key]=0;
+
+ /* زيادة المستوى الذي تم شراؤه */
+ S[r.key]++;
+
+ render();save();
+ say('مبروك! تمت ترقية '+r.name+' 🎉');
+ shop.scrollTop=0;
 });
 
-/* نظام إعادة الولادة */
-rebirthBtn.addEventListener('click',function(){
-
- if(S.money<REBIRTH_COST){
-  say('لازم تجمع مليون جنيه الأول!');
+var last=performance.now(),acc=0,saveT=0;
+function tick(now){
+ requestAnimationFrame(tick);
+ var dt=Math.min(.25,(now-last)/1000);last=now;
+ if(document.hidden)return;
+ S.free+=freeRate()*dt;
+ S.money+=rate()*dt;
+ acc+=dt;
+ if(acc>=.25){
+  acc=0;
+  var earned=collectGems();
+  if(earned>0){say('حصلت على '+earned+' 💎 جوهرة!');save()}
+  render();
+ }
+ saveT+=dt;
+ if(saveT>=5){saveT=0;save()}
+}
+document.addEventListener('visibilitychange',function(){
+ if(document.hidden){save()}
+ else{
+  offline();
+  var earned=collectGems();
+  if(earned>0)say('أهلاً بعودتك! حصلت على '+earned+' جوهرة 💎');
+  last=performance.now();render();save();
+ }
+});
+window.addEventListener('pagehide',save);
+render();save();requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
+لازم تجمع مليون جنيه الأول!');
   return;
  }
 
